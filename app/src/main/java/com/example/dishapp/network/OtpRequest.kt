@@ -1,7 +1,7 @@
 package com.example.dishapp.network
 
 data class OtpRequest(
-    val apikey: String = "sXhcPu0JneUbQ6TG2tXePK8MC2tBAHn9",
+    val apikey: String = "kUCqqbfEQxkZge7HHDFcIxfoHzqSZUam",
     val identifier: String,
     val language: String = "Vi",
     val method: String = "Sms",

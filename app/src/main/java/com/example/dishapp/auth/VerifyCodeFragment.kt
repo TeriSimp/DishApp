@@ -3,7 +3,6 @@ package com.example.dishapp.auth
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -21,7 +20,6 @@ import com.example.dishapp.network.OtpRequest
 import com.example.dishapp.network.RetrofitClient
 import com.example.dishapp.network.VerifyRequest
 import com.example.dishapp.network.VerifyResponse
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -120,7 +118,6 @@ class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
                 )
                 val resp: Response<VerifyResponse> =
                     authService.verifyOtp(apiKey, userId, request)
-                Log.e("OTP", "request ${Gson().toJson(request)}")
                 if (resp.isSuccessful) {
                     val token = resp.body()?.token.orEmpty()
                     tvToken.visibility = View.VISIBLE
@@ -131,7 +128,6 @@ class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    Log.e("OTP", "Error ${resp.code()}: ${resp.errorBody()?.string()}")
                     clearOtpInputs()
                     tvToken.visibility = View.GONE
                     Toast.makeText(
