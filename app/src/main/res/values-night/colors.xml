@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="card_bg">#1E1E1E</color>
+    <color name="btn_edit_bg">#4DB6AC</color>
+    <color name="btn_delete_bg">#EF5350</color>
+    <color name="btn_text">#FFFFFF</color>
+</resources>

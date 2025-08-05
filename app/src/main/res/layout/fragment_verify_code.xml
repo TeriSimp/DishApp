@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="74dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/nav_back"
+        android:src="@drawable/chevron_back"
+        app:layout_constraintBottom_toTopOf="@+id/tvVerifyTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tvVerifyTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="28dp"
+        android:fontFamily="@font/raleway_semibold"
+        android:text="@string/check_your_message"
+        android:textAlignment="center"
+        android:textColor="#0C0A29"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvVerifySubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnBack" />
+
+    <TextView
+        android:id="@+id/tvVerifySubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="36dp"
+        android:gravity="center"
+        android:text="@string/verification_message"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvVerifyTitle" />
+
+    <LinearLayout
+        android:id="@+id/otpContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="36dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvVerifySubtitle">
+
+        <EditText
+            android:id="@+id/etDigit1"
+            style="@style/OtpEditText"
+            android:layout_width="0dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:autofillHints="oneTimeCode"
+            android:focusableInTouchMode="true"
+            android:hint=""
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="1"
+            tools:ignore="LabelFor,Autofill" />
+
+        <EditText
+            android:id="@+id/etDigit2"
+            style="@style/OtpEditText"
+            android:layout_width="0dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:autofillHints="oneTimeCode"
+            android:focusableInTouchMode="true"
+            android:hint=""
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="1"
+            tools:ignore="LabelFor,Autofill" />
+
+
+        <EditText
+            android:id="@+id/etDigit3"
+            style="@style/OtpEditText"
+            android:layout_width="0dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:autofillHints="oneTimeCode"
+            android:focusableInTouchMode="true"
+            android:hint=""
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="1"
+            tools:ignore="LabelFor,Autofill" />
+
+        <EditText
+            android:id="@+id/etDigit4"
+            style="@style/OtpEditText"
+            android:layout_width="0dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:autofillHints="oneTimeCode"
+            android:focusableInTouchMode="true"
+            android:hint=""
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="1"
+            tools:ignore="LabelFor,Autofill" />
+
+        <EditText
+            android:id="@+id/etDigit5"
+            style="@style/OtpEditText"
+            android:layout_width="0dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:autofillHints="oneTimeCode"
+            android:focusableInTouchMode="true"
+            android:hint=""
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="1"
+            tools:ignore="LabelFor,Autofill" />
+
+        <EditText
+            android:id="@+id/etDigit6"
+            style="@style/OtpEditText"
+            android:layout_width="0dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:autofillHints="oneTimeCode"
+            android:focusableInTouchMode="true"
+            android:hint=""
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="1"
+            tools:ignore="LabelFor,Autofill" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/resendContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/otpContainer">
+
+        <Button
+            android:id="@+id/btnResend"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/send_again"
+            android:textColor="#7949EC"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="36dp"
+            android:text="@string/otp_timer"
+            app:layout_constraintBaseline_toBaselineOf="@id/btnResend"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvToken"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:visibility="gone"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:text="@string/token_display"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resendContainer"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

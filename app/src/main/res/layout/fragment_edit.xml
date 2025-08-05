@@ -1,0 +1,83 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_dish_gradient">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/placeholder"
+                android:contentDescription="@string/dish_image_desc"
+                android:scaleType="centerCrop"
+                android:clickable="true"
+                android:focusable="true"
+                app:shapeAppearanceOverlay="@drawable/bg_image_rounded"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/tvPickOverlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pick_image_hint"
+                android:textColor="@android:color/white"
+                android:background="#80000000"
+                android:padding="4dp"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:inputType="text"
+            android:hint="@string/dish_name_hint"
+            android:autofillHints="none"
+            android:textColor="#333333"
+            android:textColorHint="#777777"
+            android:backgroundTint="#CCCCCC"/>
+
+        <Spinner
+            android:id="@+id/spinnerType"
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="#FFFFFF"
+            android:popupBackground="#FFFFFF"/>
+
+        <EditText
+            android:id="@+id/etIngredients"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:inputType="text"
+            android:hint="@string/ingredients_hint"
+            android:layout_marginTop="15dp"
+            android:autofillHints="none"
+            android:textColor="#333333"
+            android:textColorHint="#777777"
+            android:backgroundTint="#CCCCCC"/>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/btn_save"
+            android:textColor="#FFFFFF"
+            app:backgroundTint="#2A9D8F"
+            app:cornerRadius="8dp"
+            android:layout_marginTop="20dp" />
+    </LinearLayout>
+</ScrollView>
