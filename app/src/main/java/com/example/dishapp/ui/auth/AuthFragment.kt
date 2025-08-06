@@ -1,4 +1,4 @@
-package com.example.dishapp.auth
+package com.example.dishapp.ui.auth
 
 import android.os.Bundle
 import android.util.Patterns

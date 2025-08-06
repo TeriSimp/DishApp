@@ -1,4 +1,4 @@
-package com.example.dishapp.auth
+package com.example.dishapp.ui.auth
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
