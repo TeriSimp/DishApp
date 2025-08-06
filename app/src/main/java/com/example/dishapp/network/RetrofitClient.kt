@@ -1,8 +1,8 @@
 package com.example.dishapp.network
 
 import android.util.Log
-import com.github.mrmike.ok2curl.CurlInterceptor
-import com.github.mrmike.ok2curl.Logger
+import com.moczul.ok2curl.CurlInterceptor
+import com.moczul.ok2curl.logger.Logger
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,7 +17,6 @@ object RetrofitClient {
             CurlInterceptor(
                 logger = object : Logger {
                     override fun log(message: String) {
-                        // Log dòng CURL
                         Log.i("[RetrofitClient]", ":CURL $message")
                     }
                 }
