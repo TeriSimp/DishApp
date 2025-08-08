@@ -38,4 +38,6 @@
     <string name="client_id">382515046157-pptujttos4cmapm8n2pv5gj00m95edc0.apps.googleusercontent.com</string>
     <string name="user_name_fmt">Name: %1$s</string>
     <string name="user_email_fmt">Email: %1$s</string>
+    <string name="custom_country_picker">Custom country picker</string>
+    <string name="choose_country">Choose your country</string>
 </resources>

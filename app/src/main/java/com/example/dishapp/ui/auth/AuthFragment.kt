@@ -7,6 +7,7 @@ import android.util.Patterns
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -49,6 +50,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private lateinit var tvAuthText: TextView
     private lateinit var btnAuthGoogle: LinearLayout
     private lateinit var ccp: CountryCodePicker
+    private lateinit var btnCustomPicker: ImageButton
     //private late init var tvUserName: TextView
     //private late init var tvUserEmail: TextView
     //private late init var ivUserPhoto: ImageView
@@ -92,6 +94,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         tvAuthText = view.findViewById(R.id.tvAuthText)
         btnAuthGoogle = view.findViewById(R.id.btnAuthGoogle)
         ccp = view.findViewById(R.id.ccp)
+        btnCustomPicker  = view.findViewById(R.id.btnCustomPicker)
         //tvUserName     = view.findViewById(R.id.tvUserName)
         //tvUserEmail    = view.findViewById(R.id.tvUserEmail)
         //ivUserPhoto    = view.findViewById(R.id.ivUserPhoto)
@@ -173,6 +176,13 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             }
         }
 
+        btnCustomPicker.setOnClickListener {
+            CountryListBottomSheet { dialCode, iso2 ->
+                ccp.setCountryForNameCode(iso2)
+                Log.d("AuthFragment", "Custom picker selected iso2=$iso2, dialCode=$dialCode")
+            }.show(childFragmentManager, "countryList")
+        }
+
         updateUI()
         btnSignIn.isEnabled = false
         btnSignIn.alpha = 0.5f
@@ -184,12 +194,14 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             tvAuthTitle.text = getString(R.string.enter_your_phone_number_to_sign_in)
             phoneContainer.visibility = View.VISIBLE
             emailContainer.visibility = View.GONE
+            btnCustomPicker.visibility = View.VISIBLE
             ivAuthIcon.setImageResource(R.drawable.ic_email)
             tvAuthText.text = getString(R.string.email)
         } else {
             tvAuthTitle.text = getString(R.string.enter_your_email_address_to_sign_in)
             phoneContainer.visibility = View.GONE
             emailContainer.visibility = View.VISIBLE
+            btnCustomPicker.visibility = View.GONE
             ivAuthIcon.setImageResource(R.drawable.ic_phone)
             tvAuthText.text = getString(R.string.phone)
         }
