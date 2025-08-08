@@ -72,4 +72,6 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.firebase.ui.auth)
     implementation(libs.glide)
+    implementation(libs.ccp)
+    implementation(libs.libphonenumber)
 }

@@ -12,63 +12,52 @@
         android:layout_marginTop="74dp"
         android:contentDescription="@string/nav_back"
         android:src="@drawable/chevron_back"
+        app:layout_constraintBottom_toTopOf="@+id/tvAuthTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/tvAuthTitle" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvAuthTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="24dp"
         android:fontFamily="@font/raleway_semibold"
         android:text="@string/enter_your_phone_number_to_sign_in"
+        android:textAlignment="center"
         android:textColor="#0C0A29"
         android:textSize="24sp"
-        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/phoneInputContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/phoneInputContainer"
         app:layout_constraintTop_toBottomOf="@+id/btnBack" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/phoneInputContainer"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_marginTop="15dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/bg_phone_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAuthTitle">
 
-        <ImageView
-            android:id="@+id/ivFlag"
-            android:layout_width="38dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_flag_round"
-            android:clipToOutline="true"
-            android:contentDescription="@string/flag_icon"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_flag"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tvCountryCode"
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/ccp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginTop="17dp"
-            android:fontFamily="@font/raleway_regular"
-            android:text="@string/_84"
-            android:textColor="#0C0A29"
-            android:textSize="14sp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="7dp"
+            app:ccp_textSize="16sp"
+            app:ccpDialog_textColor="#91673AB7"
+            app:ccp_autoDetectCountry="true"
+            app:ccp_showFlag="true"
+            app:ccp_showNameCode="true"
+            app:ccp_useDummyEmojiForPreview="true"
+            app:ccp_useFlagEmoji="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -76,17 +65,17 @@
             android:id="@+id/vDivider"
             android:layout_width="1dp"
             android:layout_height="28dp"
-            android:layout_marginStart="91dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="12dp"
             android:background="#EBEBEB"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ccp"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/etPhoneNumber"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="104dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="5dp"
             android:autofillHints="phone"
@@ -98,19 +87,19 @@
             android:textColorHint="#91673AB7"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/vDivider"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/emailInputContainer"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_marginTop="15dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/bg_phone_input"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAuthTitle">
@@ -151,7 +140,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="phoneInputContainer,emailInputContainer"/>
+        app:constraint_referenced_ids="phoneInputContainer,emailInputContainer" />
 
     <LinearLayout
         android:id="@+id/termsContainer"
@@ -191,8 +180,8 @@
         android:id="@+id/btnSignIn"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_marginTop="25dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/bg_sign_in_button"
         android:elevation="8dp"
@@ -208,9 +197,9 @@
         android:translationZ="20dp"
 
         app:cornerRadius="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvOrSignInWith"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/tvOrSignInWith"
         app:layout_constraintTop_toBottomOf="@+id/termsContainer" />
 
     <TextView
@@ -233,10 +222,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
-        android:layout_marginEnd="52dp"
         android:layout_marginTop="30dp"
-        android:orientation="horizontal"
+        android:layout_marginEnd="52dp"
         android:gravity="center_horizontal"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvOrSignInWith">
@@ -245,9 +234,9 @@
             android:id="@+id/btnAuthToggle"
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:layout_weight="1"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
+            android:layout_weight="1"
             android:background="@drawable/bg_auth_button"
             android:clickable="true"
             android:focusable="true"
@@ -279,9 +268,9 @@
             android:id="@+id/btnAuthGoogle"
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:layout_weight="1"
             android:layout_marginStart="22dp"
             android:layout_marginTop="0dp"
+            android:layout_weight="1"
             android:background="@drawable/bg_auth_button"
             android:clickable="true"
             android:focusable="true"
@@ -310,9 +299,9 @@
             android:id="@+id/btnAuthApple"
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:layout_weight="1"
             android:layout_marginStart="22dp"
             android:layout_marginTop="0dp"
+            android:layout_weight="1"
             android:background="@drawable/bg_auth_button"
             android:clickable="true"
             android:focusable="true"
@@ -344,36 +333,36 @@
         android:id="@+id/tvUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/user_name_fmt"
-        android:visibility="gone"
-        android:textSize="20sp"
         android:layout_marginTop="20dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/user_name_fmt"
+        android:textSize="20sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authMethodsContainer"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authMethodsContainer" />
 
     <TextView
         android:id="@+id/tvUserEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/user_email_fmt"
-        android:visibility="gone"
-        android:textSize="20sp"
         android:layout_marginTop="5dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/user_email_fmt"
+        android:textSize="20sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUserName"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
 
     <ImageView
         android:id="@+id/ivUserPhoto"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:visibility="gone"
         android:layout_marginTop="8dp"
         android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUserEmail"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserEmail" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

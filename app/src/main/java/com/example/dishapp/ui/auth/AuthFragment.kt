@@ -15,7 +15,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
+import com.hbb20.CountryCodePicker
+//import com.bumptech.glide.Glide
 import com.example.dishapp.R
 import com.example.dishapp.network.OtpRequest
 import com.example.dishapp.network.OtpResponse
@@ -23,7 +24,10 @@ import com.example.dishapp.network.RetrofitClient
 import com.google.android.material.button.MaterialButton
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.google.firebase.auth.FirebaseAuth
+import com.google.i18n.phonenumbers.NumberParseException
+import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat
+//import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -44,10 +48,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private lateinit var ivAuthIcon: ImageView
     private lateinit var tvAuthText: TextView
     private lateinit var btnAuthGoogle: LinearLayout
-
-    private lateinit var tvUserName: TextView
-    private lateinit var tvUserEmail: TextView
-    private lateinit var ivUserPhoto: ImageView
+    private lateinit var ccp: CountryCodePicker
+    //private late init var tvUserName: TextView
+    //private late init var tvUserEmail: TextView
+    //private late init var ivUserPhoto: ImageView
 
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
@@ -61,7 +65,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             ).show()
             Log.d("AuthFragment", "Login success: ${response?.providerType}")
             // findNavController().navigate(R.id.action_auth_to_main)
-            showCurrentUser()
+            //showCurrentUser()
         } else {
             val code = response?.error?.errorCode
             Log.w("Error", "UI sign-in failed code=$code")
@@ -87,10 +91,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         ivAuthIcon = view.findViewById(R.id.ivAuthIcon)
         tvAuthText = view.findViewById(R.id.tvAuthText)
         btnAuthGoogle = view.findViewById(R.id.btnAuthGoogle)
-
-        tvUserName     = view.findViewById(R.id.tvUserName)
-        tvUserEmail    = view.findViewById(R.id.tvUserEmail)
-        ivUserPhoto    = view.findViewById(R.id.ivUserPhoto)
+        ccp = view.findViewById(R.id.ccp)
+        //tvUserName     = view.findViewById(R.id.tvUserName)
+        //tvUserEmail    = view.findViewById(R.id.tvUserEmail)
+        //ivUserPhoto    = view.findViewById(R.id.ivUserPhoto)
 
         btnAuthGoogle.setOnClickListener {
             val providers = listOf(
@@ -139,26 +143,30 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 return@setOnClickListener
             }
 
-            val input = if (mode == Mode.PHONE) etPhone.text.toString() else etEmail.text.toString()
-            val valid = when (mode) {
-                Mode.PHONE -> input.length >= 10 && input.all { it.isDigit() }
-                Mode.EMAIL -> Patterns.EMAIL_ADDRESS.matcher(input).matches() &&
-                        input.endsWith("@gmail.com", ignoreCase = true)
-            }
-
-            if (!valid) {
-                val what = if (mode == Mode.PHONE) "phone number" else "email"
-                Toast.makeText(
-                    requireContext(),
-                    "Invalid $what. Please check and retry.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return@setOnClickListener
-            }
-
             if (mode == Mode.PHONE) {
-                requestOtp(input)
+                val raw = etPhone.text.toString().trim()
+                val e164 = getValidatedE164Number(raw)
+                if (e164 == null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Invalid phone number. Please check and retry.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+                requestOtp(e164)
             } else {
+                val input = etEmail.text.toString().trim()
+                val validEmail = Patterns.EMAIL_ADDRESS.matcher(input).matches() &&
+                        input.endsWith("@gmail.com", ignoreCase = true)
+                if (!validEmail) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Invalid email. Please check and retry.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
                 val action = AuthFragmentDirections
                     .actionAuthToVerifyCode(contact = input)
                 findNavController().navigate(action)
@@ -168,8 +176,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         updateUI()
         btnSignIn.isEnabled = false
         btnSignIn.alpha = 0.5f
-
-        showCurrentUser()
+        //showCurrentUser()
     }
 
     private fun updateUI() {
@@ -185,6 +192,32 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             emailContainer.visibility = View.VISIBLE
             ivAuthIcon.setImageResource(R.drawable.ic_phone)
             tvAuthText.text = getString(R.string.phone)
+        }
+    }
+
+    private fun getValidatedE164Number(raw: String): String? {
+        if (raw.isEmpty()) return null
+        val phoneUtil = PhoneNumberUtil.getInstance()
+        val iso2 = try {
+            ccp.selectedCountryNameCode ?: ""
+        } catch (e: Exception) {
+            Log.e("AuthFragment", "Error getting country ISO code", e)
+            ""
+        }
+
+        return try {
+            val numberProto = phoneUtil.parse(raw, iso2)
+            if (!phoneUtil.isValidNumber(numberProto)) {
+                null
+            } else {
+                phoneUtil.format(numberProto, PhoneNumberFormat.E164)
+            }
+        } catch (e: NumberParseException) {
+            Log.w("AuthFragment", "NumberParseException: ${e.message}")
+            null
+        } catch (e: Exception) {
+            Log.w("AuthFragment", "Unexpected parse error: ${e.message}")
+            null
         }
     }
 
@@ -216,22 +249,23 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         }
     }
 
-    private fun showCurrentUser() {
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            tvUserName.text  = getString(R.string.user_name_fmt, user.displayName ?: "")
-            tvUserEmail.text = getString(R.string.user_email_fmt, user.email       ?: "")
-
-            user.photoUrl?.let { uri ->
-                Glide.with(this)
-                    .load(uri)
-                    .circleCrop()
-                    .into(ivUserPhoto)
-            }
-
-            tvUserName.visibility  = View.VISIBLE
-            tvUserEmail.visibility = View.VISIBLE
-            ivUserPhoto.visibility = View.VISIBLE
-        }
-    }
+//    private fun showCurrentUser() {
+//        val user = FirebaseAuth.getInstance().currentUser
+//        if (user != null) {
+//
+//            tvUserName.text  = getString(R.string.user_name_fmt, user.displayName ?: "")
+//            tvUserEmail.text = getString(R.string.user_email_fmt, user.email       ?: "")
+//
+//            user.photoUrl?.let { uri ->
+//                Glide.with(this)
+//                    .load(uri)
+//                    .circleCrop()
+//                    .into(ivUserPhoto)
+//            }
+//
+//            tvUserName.visibility  = View.VISIBLE
+//            tvUserEmail.visibility = View.VISIBLE
+//            ivUserPhoto.visibility = View.VISIBLE
+//        }
+//    }
 }

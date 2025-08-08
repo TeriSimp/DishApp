@@ -19,8 +19,6 @@
     <string name="dish_icon">dish icon</string>
     <string name="nav_back">navigate back</string>
     <string name="enter_your_phone_number_to_sign_in">Enter your phone number to sign in</string>
-    <string name="flag_icon">flag icon</string>
-    <string name="_84">+84</string>
     <string name="input_phone_number_hint">Phone number</string>
     <string name="terms_of_service_agreement">I agree to the Terms of Service, Policy</string>
     <string name="sign_in">SIGN IN</string>
