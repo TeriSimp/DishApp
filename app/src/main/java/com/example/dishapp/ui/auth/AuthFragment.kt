@@ -1,6 +1,8 @@
 package com.example.dishapp.ui.auth
 
+import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.CheckBox
@@ -13,11 +15,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.button.MaterialButton
+import com.bumptech.glide.Glide
 import com.example.dishapp.R
-import com.example.dishapp.network.RetrofitClient
 import com.example.dishapp.network.OtpRequest
 import com.example.dishapp.network.OtpResponse
+import com.example.dishapp.network.RetrofitClient
+import com.google.android.material.button.MaterialButton
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -37,6 +43,35 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private lateinit var btnAuthToggle: LinearLayout
     private lateinit var ivAuthIcon: ImageView
     private lateinit var tvAuthText: TextView
+    private lateinit var btnAuthGoogle: LinearLayout
+
+    private lateinit var tvUserName: TextView
+    private lateinit var tvUserEmail: TextView
+    private lateinit var ivUserPhoto: ImageView
+
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract()
+    ) { res ->
+        val response = res.idpResponse
+        if (res.resultCode == Activity.RESULT_OK) {
+            Toast.makeText(
+                requireContext(),
+                "Login success!",
+                Toast.LENGTH_SHORT
+            ).show()
+            Log.d("AuthFragment", "Login success: ${response?.providerType}")
+            // findNavController().navigate(R.id.action_auth_to_main)
+            showCurrentUser()
+        } else {
+            val code = response?.error?.errorCode
+            Log.w("Error", "UI sign-in failed code=$code")
+            Toast.makeText(
+                requireContext(),
+                "Authentication failed: ${response?.error?.localizedMessage}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,6 +86,22 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         btnAuthToggle = view.findViewById(R.id.btnAuthToggle)
         ivAuthIcon = view.findViewById(R.id.ivAuthIcon)
         tvAuthText = view.findViewById(R.id.tvAuthText)
+        btnAuthGoogle = view.findViewById(R.id.btnAuthGoogle)
+
+        tvUserName     = view.findViewById(R.id.tvUserName)
+        tvUserEmail    = view.findViewById(R.id.tvUserEmail)
+        ivUserPhoto    = view.findViewById(R.id.ivUserPhoto)
+
+        btnAuthGoogle.setOnClickListener {
+            val providers = listOf(
+                AuthUI.IdpConfig.GoogleBuilder().build()
+            )
+            val intent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .build()
+            signInLauncher.launch(intent)
+        }
 
         view.isClickable = true
         view.isFocusableInTouchMode = true
@@ -117,6 +168,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         updateUI()
         btnSignIn.isEnabled = false
         btnSignIn.alpha = 0.5f
+
+        showCurrentUser()
     }
 
     private fun updateUI() {
@@ -159,8 +212,26 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                     "Cannot connect: ${e.localizedMessage}",
                     Toast.LENGTH_LONG
                 ).show()
-            } finally {
             }
+        }
+    }
+
+    private fun showCurrentUser() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            tvUserName.text  = getString(R.string.user_name_fmt, user.displayName ?: "")
+            tvUserEmail.text = getString(R.string.user_email_fmt, user.email       ?: "")
+
+            user.photoUrl?.let { uri ->
+                Glide.with(this)
+                    .load(uri)
+                    .circleCrop()
+                    .into(ivUserPhoto)
+            }
+
+            tvUserName.visibility  = View.VISIBLE
+            tvUserEmail.visibility = View.VISIBLE
+            ivUserPhoto.visibility = View.VISIBLE
         }
     }
 }

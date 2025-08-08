@@ -37,4 +37,7 @@
     <string name="send_again">Send again</string>
     <string name="otp_timer">0:%1$02d</string>
     <string name="token_display">Your token:\n%s</string>
+    <string name="client_id">382515046157-pptujttos4cmapm8n2pv5gj00m95edc0.apps.googleusercontent.com</string>
+    <string name="user_name_fmt">Name: %1$s</string>
+    <string name="user_email_fmt">Email: %1$s</string>
 </resources>
