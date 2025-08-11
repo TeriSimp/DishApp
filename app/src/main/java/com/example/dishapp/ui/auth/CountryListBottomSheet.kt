@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dishapp.R
@@ -33,6 +35,11 @@ class CountryListBottomSheet(
             onSelect(country.dialCode, country.iso2)
             dismiss()
         }
+
+        val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.recycler_divider)
+        drawable?.let { divider.setDrawable(it) }
+        rv.addItemDecoration(divider)
     }
 
     private class CountryAdapter(
