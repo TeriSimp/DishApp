@@ -68,7 +68,6 @@ dependencies {
     implementation(libs.ok2curl)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx.v2210)
-    implementation(libs.firebase.analytics)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.ui.auth)
     implementation(libs.glide)
