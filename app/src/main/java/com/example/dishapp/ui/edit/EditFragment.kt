@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.example.dishapp.R
 import com.example.dishapp.databinding.FragmentEditBinding
 import com.example.dishapp.models.Data
@@ -26,10 +27,17 @@ class EditFragment : Fragment(R.layout.fragment_edit) {
     private var dish: Dish? = null
     private var nextId: Int = 0
 
+    private val args: EditFragmentArgs by navArgs()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val idArg = arguments?.getInt(ARG_ID)
-        dish = idArg?.let { Data.getById(it) }
+        val id = try {
+            args.id
+        } catch (e: Exception) {
+            Log.e("EditFragment", "No id arg: ${e.message}")
+            -1
+        }
+        dish = if (id >= 0) Data.getById(id) else null
         nextId = dish?.id ?: Data.getNextId()
     }
 
@@ -118,15 +126,6 @@ class EditFragment : Fragment(R.layout.fragment_edit) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val ARG_ID = "arg_id"
-        fun newInstance(id: Int?) = EditFragment().apply {
-            arguments = Bundle().apply {
-                id?.let { putInt(ARG_ID, it) }
-            }
-        }
     }
 }
 

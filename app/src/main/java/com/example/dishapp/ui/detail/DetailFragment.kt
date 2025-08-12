@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.example.dishapp.R
 import com.example.dishapp.databinding.FragmentDetailBinding
 import com.example.dishapp.models.Data
@@ -18,16 +20,39 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private val binding get() = _binding!!
     private lateinit var dish: Dish
 
+    private val args: DetailFragmentArgs by navArgs()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val id = requireArguments().getInt(ARG_ID)
-        dish = Data.getById(id)
-            ?: throw IllegalStateException("Dish with id $id not found")
+        val id = try {
+            args.id
+        } catch (e: Exception) {
+            Log.e("DetailFragment", "Failed to get arg id: ${e.message}")
+            -1
+        }
+
+        if (id < 0) {
+            Log.e("DetailFragment", "Invalid id passed: $id")
+            return
+        }
+
+        val maybeDish = Data.getById(id)
+        if (maybeDish == null) {
+            Log.e("DetailFragment", "Dish with id $id not found")
+            return
+        }
+        dish = maybeDish
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentDetailBinding.bind(view)
+
+        if (!::dish.isInitialized) {
+            binding.tvName.text = getString(R.string.label_not_found)
+            binding.ivPhoto.setImageResource(R.drawable.placeholder)
+            return
+        }
 
         dish.imageUri?.takeIf { it.isNotEmpty() }?.let { uriString ->
             val uri = uriString.toUri()
@@ -44,14 +69,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val ARG_ID = "arg_id"
-
-        fun newInstance(id: Int) = DetailFragment().apply {
-            arguments = Bundle().apply { putInt(ARG_ID, id) }
-        }
     }
 }
 

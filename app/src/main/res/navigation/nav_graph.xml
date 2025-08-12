@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/authFragment">
@@ -16,14 +15,21 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@id/authFragment"
-            app:popUpToInclusive="false">
-
+            app:popExitAnim="@anim/slide_out_right">
             <argument
                 android:name="contact"
                 app:argType="string" />
         </action>
+
+        <action
+            android:id="@+id/action_auth_to_dish_list"
+            app:destination="@id/listFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/authFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -36,4 +42,51 @@
             app:argType="string" />
     </fragment>
 
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.example.dishapp.ui.list.ListFragment"
+        tools:layout="@layout/fragment_dishes_list">
+
+        <action
+            android:id="@+id/action_list_to_detail"
+            app:destination="@id/detailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_list_to_edit"
+            app:destination="@id/editFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.dishapp.ui.detail.DetailFragment"
+        tools:layout="@layout/fragment_detail">
+
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.example.dishapp.ui.edit.EditFragment"
+        tools:layout="@layout/fragment_edit">
+
+        <argument
+            android:name="id"
+            android:defaultValue="-1"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.example.dishapp.ui.auth.AccountFragment"
+        tools:layout="@layout/fragment_account" />
 </navigation>

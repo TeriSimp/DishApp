@@ -66,7 +66,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 Toast.LENGTH_SHORT
             ).show()
             Log.d("AuthFragment", "Login success: ${response?.providerType}")
-            // findNavController().navigate(R.id.action_auth_to_main)
+            findNavController().navigate(R.id.action_auth_to_dish_list)
             //showCurrentUser()
         } else {
             val code = response?.error?.errorCode

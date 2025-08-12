@@ -40,4 +40,14 @@
     <string name="user_email_fmt">Email: %1$s</string>
     <string name="custom_country_picker">Custom country picker</string>
     <string name="choose_country">Choose your country</string>
+    <string name="dishes">Dishes list</string>
+    <string name="account">Account</string>
+    <string name="user_avatar">User avatar</string>
+    <string name="user_name">User name</string>
+    <string name="email_holder">email@example.com</string>
+    <string name="other_information">Other information</string>
+    <string name="loading">(Loading…)</string>
+    <string name="no_user">Can not find user</string>
+    <string name="null_user">User info is null</string>
+    <string name="label_not_found">Not found</string>
 </resources>

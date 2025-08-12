@@ -3,14 +3,13 @@ package com.example.dishapp.ui.list
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dishapp.R
 import com.example.dishapp.databinding.FragmentDishesListBinding
 import com.example.dishapp.models.Data
 import com.example.dishapp.models.Dish
-import com.example.dishapp.ui.detail.DetailFragment
-import com.example.dishapp.ui.edit.EditFragment
 
 class ListFragment : Fragment(R.layout.fragment_dishes_list),
     OnDishActionListener {
@@ -45,10 +44,8 @@ class ListFragment : Fragment(R.layout.fragment_dishes_list),
 
     private fun setupFab() {
         binding.fabAdd.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.nav_host_fragment, EditFragment.newInstance(null))
-                .addToBackStack(null)
-                .commit()
+            val action = ListFragmentDirections.actionListToEdit(-1)
+            findNavController().navigate(action)
         }
     }
 
@@ -71,17 +68,13 @@ class ListFragment : Fragment(R.layout.fragment_dishes_list),
     }
 
     override fun onView(dish: Dish) {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.nav_host_fragment, DetailFragment.newInstance(dish.id))
-            .addToBackStack(null)
-            .commit()
+        val action = ListFragmentDirections.actionListToDetail(dish.id)
+        findNavController().navigate(action)
     }
 
     override fun onEdit(dish: Dish) {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.nav_host_fragment, EditFragment.newInstance(dish.id))
-            .addToBackStack(null)
-            .commit()
+        val action = ListFragmentDirections.actionListToEdit(dish.id)
+        findNavController().navigate(action)
     }
 
     override fun onDelete(dish: Dish) {
