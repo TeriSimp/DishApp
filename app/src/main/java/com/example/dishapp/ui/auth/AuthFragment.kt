@@ -51,9 +51,6 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private lateinit var btnAuthGoogle: LinearLayout
     private lateinit var ccp: CountryCodePicker
     private lateinit var btnCustomPicker: ImageButton
-    //private late init var tvUserName: TextView
-    //private late init var tvUserEmail: TextView
-    //private late init var ivUserPhoto: ImageView
 
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
@@ -67,7 +64,6 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             ).show()
             Log.d("AuthFragment", "Login success: ${response?.providerType}")
             findNavController().navigate(R.id.action_auth_to_dish_list)
-            //showCurrentUser()
         } else {
             val code = response?.error?.errorCode
             Log.w("Error", "UI sign-in failed code=$code")
@@ -94,10 +90,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         tvAuthText = view.findViewById(R.id.tvAuthText)
         btnAuthGoogle = view.findViewById(R.id.btnAuthGoogle)
         ccp = view.findViewById(R.id.ccp)
-        btnCustomPicker  = view.findViewById(R.id.btnCustomPicker)
-        //tvUserName     = view.findViewById(R.id.tvUserName)
-        //tvUserEmail    = view.findViewById(R.id.tvUserEmail)
-        //ivUserPhoto    = view.findViewById(R.id.ivUserPhoto)
+        btnCustomPicker = view.findViewById(R.id.btnCustomPicker)
 
         btnAuthGoogle.setOnClickListener {
             val providers = listOf(
@@ -186,7 +179,6 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         updateUI()
         btnSignIn.isEnabled = false
         btnSignIn.alpha = 0.5f
-        //showCurrentUser()
     }
 
     private fun updateUI() {
@@ -238,11 +230,11 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             try {
                 val body = OtpRequest(identifier = phone)
                 val response: Response<OtpResponse> =
-                    RetrofitClient.authService.getOtp(body = body)
+                    RetrofitClient.authService(requireContext()).getOtp(body = body)
 
                 if (response.isSuccessful) {
                     val action = AuthFragmentDirections
-                        .actionAuthToVerifyCode(contact = phone)
+                        .actionAuthToVerifyCode(phone)
                     findNavController().navigate(action)
                 } else {
                     Toast.makeText(
@@ -260,24 +252,4 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             }
         }
     }
-
-//    private fun showCurrentUser() {
-//        val user = FirebaseAuth.getInstance().currentUser
-//        if (user != null) {
-//
-//            tvUserName.text  = getString(R.string.user_name_fmt, user.displayName ?: "")
-//            tvUserEmail.text = getString(R.string.user_email_fmt, user.email       ?: "")
-//
-//            user.photoUrl?.let { uri ->
-//                Glide.with(this)
-//                    .load(uri)
-//                    .circleCrop()
-//                    .into(ivUserPhoto)
-//            }
-//
-//            tvUserName.visibility  = View.VISIBLE
-//            tvUserEmail.visibility = View.VISIBLE
-//            ivUserPhoto.visibility = View.VISIBLE
-//        }
-//    }
 }

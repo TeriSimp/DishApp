@@ -13,28 +13,31 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.dishapp.R
+import com.example.dishapp.data.AuthRepository
 import com.example.dishapp.network.OtpRequest
 import com.example.dishapp.network.RetrofitClient
 import com.example.dishapp.network.VerifyRequest
-import com.example.dishapp.network.VerifyResponse
 import kotlinx.coroutines.launch
-import retrofit2.Response
 
 class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
 
     private lateinit var tvVerifySubtitle: TextView
     private lateinit var btnResend: Button
     private lateinit var tvTimer: TextView
-    private lateinit var tvToken: TextView
     private var timer: CountDownTimer? = null
     private lateinit var etDigits: List<EditText>
 
-    private val authService = RetrofitClient.authService
     private val apiKey = "kUCqqbfEQxkZge7HHDFcIxfoHzqSZUam"
-    private val userId = "0x5c404115fab8ea5ab9fc1eff1c5575968330e384"
+
+    private lateinit var repo: AuthRepository
+    private lateinit var viewModel: AuthViewModel
+
+    private var isTimerFinished = false
+    private var isLoadingState = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,7 +45,6 @@ class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
         tvVerifySubtitle = view.findViewById(R.id.tvVerifySubtitle)
         btnResend = view.findViewById(R.id.btnResend)
         tvTimer = view.findViewById(R.id.tvTimer)
-        tvToken = view.findViewById(R.id.tvToken)
         etDigits = listOf(
             view.findViewById(R.id.etDigit1),
             view.findViewById(R.id.etDigit2),
@@ -53,16 +55,37 @@ class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
         )
 
         val contact = VerifyCodeFragmentArgs.fromBundle(requireArguments()).contact
-        tvVerifySubtitle.text =
-            getString(R.string.verification_message, contact)
+        tvVerifySubtitle.text = getString(R.string.verification_message, contact)
 
         view.findViewById<ImageButton>(R.id.btnBack)
             .setOnClickListener {
-                (requireContext()
-                    .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
+                (requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
                     .hideSoftInputFromWindow(view.windowToken, 0)
                 findNavController().popBackStack()
             }
+
+        repo = AuthRepository(requireContext())
+        val factory = AuthViewModelFactory(repo, requireContext())
+        viewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
+
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            isLoadingState = isLoading
+            etDigits.forEach { it.isEnabled = !isLoading }
+            updateResendUI()
+        }
+
+        viewModel.user.observe(viewLifecycleOwner) { user ->
+            if (user != null) {
+                findNavController().navigate(R.id.action_verifyCodeFragment_to_listFragment)
+            }
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { err ->
+            err?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                clearOtpInputs()
+            }
+        }
 
         etDigits.forEachIndexed { index, edit ->
             edit.doAfterTextChanged { text ->
@@ -71,8 +94,7 @@ class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
                         etDigits[index + 1].requestFocus()
                     } else {
                         edit.clearFocus()
-                        (requireContext()
-                            .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
+                        (requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
                             .hideSoftInputFromWindow(edit.windowToken, 0)
                         tryAutoVerify(contact)
                     }
@@ -91,12 +113,16 @@ class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
             }
         }
 
+        isTimerFinished = false
         btnResend.isEnabled = false
         btnResend.alpha = 0.5f
+        tvTimer.text = getString(R.string.otp_timer, 60)
         startCountdown()
+
         btnResend.setOnClickListener {
-            btnResend.isEnabled = false
-            btnResend.alpha = 0.5f
+            isTimerFinished = false
+            updateResendUI()
+            tvTimer.text = getString(R.string.otp_timer, 60)
             startCountdown()
             requestOtp(contact)
         }
@@ -108,44 +134,14 @@ class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
 
         etDigits.forEach { it.isEnabled = false }
 
-        lifecycleScope.launch {
-            try {
-                val request = VerifyRequest(
-                    identifier = contact,
-                    apikey = apiKey,
-                    otp = otp,
-                    method = "Sms",
-                )
-                val resp: Response<VerifyResponse> =
-                    authService.verifyOtp(apiKey, userId, request)
-                if (resp.isSuccessful) {
-                    val token = resp.body()?.token.orEmpty()
-                    tvToken.visibility = View.VISIBLE
-                    tvToken.text = getString(R.string.token_display, token)
-                    Toast.makeText(
-                        requireContext(),
-                        "Verification successful",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    clearOtpInputs()
-                    tvToken.visibility = View.GONE
-                    Toast.makeText(
-                        requireContext(),
-                        "Incorrect OTP, please try again",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } catch (_: Exception) {
-                clearOtpInputs()
-                tvToken.visibility = View.GONE
-                Toast.makeText(
-                    requireContext(),
-                    "Network error, please try again",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+        val verifyReq = VerifyRequest(
+            identifier = contact,
+            apikey = apiKey,
+            otp = otp,
+            method = "Sms"
+        )
+
+        viewModel.verifyAndFetchUser(verifyReq)
     }
 
     private fun clearOtpInputs() {
@@ -158,39 +154,42 @@ class VerifyCodeFragment : Fragment(R.layout.fragment_verify_code) {
 
     private fun startCountdown() {
         timer?.cancel()
+        isTimerFinished = false
+        updateResendUI()
+
         timer = object : CountDownTimer(60_000, 1_000) {
             override fun onTick(millisUntilFinished: Long) {
                 val seconds = (millisUntilFinished / 1_000).toInt()
                 tvTimer.text = getString(R.string.otp_timer, seconds)
             }
+
             override fun onFinish() {
                 tvTimer.text = getString(R.string.otp_timer, 0)
-                btnResend.isEnabled = true
-                btnResend.alpha = 1f
+                isTimerFinished = true
+                updateResendUI()
             }
         }.start()
     }
 
+    private fun updateResendUI() {
+        val enable = !isLoadingState && isTimerFinished
+        btnResend.isEnabled = enable
+        btnResend.alpha = if (enable) 1f else 0.5f
+    }
+
     private fun requestOtp(contact: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val body = OtpRequest(identifier = contact)
-                val response = authService.getOtp(
+                val response = RetrofitClient.authService(requireContext()).getOtp(
                     apiKey = apiKey,
                     body = body
                 )
                 if (response.isSuccessful) {
-                    Toast.makeText(
-                        requireContext(),
-                        "OTP has been sent",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "OTP has been sent", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to send OTP",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "Failed to send OTP", Toast.LENGTH_SHORT)
+                        .show()
                 }
             } catch (_: Exception) {
                 Toast.makeText(

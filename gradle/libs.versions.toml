@@ -26,10 +26,12 @@ retrofit = "3.0.0"
 converter-gson = "3.0.0"
 firebaseAuthKtx = "23.2.1"
 firebaseAuth = "24.0.0"
+securityCrypto = "1.1.0"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 ccp = { module = "com.hbb20:ccp", version.ref = "ccp" }
 firebase-auth-ktx-v2210 = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtxVersion" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

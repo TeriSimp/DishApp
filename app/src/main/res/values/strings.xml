@@ -50,4 +50,5 @@
     <string name="no_user">Can not find user</string>
     <string name="null_user">User info is null</string>
     <string name="label_not_found">Not found</string>
+    <string name="log_out">LOG OUT</string>
 </resources>
