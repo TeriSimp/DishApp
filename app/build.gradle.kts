@@ -74,4 +74,5 @@ dependencies {
     implementation(libs.ccp)
     implementation(libs.libphonenumber)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.swipelayout)
 }

@@ -4,4 +4,6 @@
     <color name="btn_edit_bg">#4DB6AC</color>
     <color name="btn_delete_bg">#EF5350</color>
     <color name="btn_text">#FFFFFF</color>
+    <color name="btn_red_color">#D32F2F</color>
+    <color name="btn_dark_color">#212121</color>
 </resources>

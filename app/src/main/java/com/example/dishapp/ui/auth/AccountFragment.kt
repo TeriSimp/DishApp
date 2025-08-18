@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,6 +14,7 @@ import com.example.dishapp.R
 import com.example.dishapp.data.AuthRepository
 import com.example.dishapp.data.TokenStore
 import com.example.dishapp.databinding.FragmentAccountBinding
+import com.example.dishapp.ui.common.ConfirmActionBottomSheet
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.text.DateFormat
@@ -25,10 +27,43 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
     private val TAG = "AccountFragment"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAccountBinding.bind(view)
 
+        parentFragmentManager.setFragmentResultListener(
+            ConfirmActionBottomSheet.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val confirmed =
+                bundle.getBoolean(ConfirmActionBottomSheet.BUNDLE_KEY_CONFIRM, false)
+            if (confirmed) {
+                val action = bundle.getString(ConfirmActionBottomSheet.EXTRA_ACTION)
+                if (action == "logout") {
+                    performLogout()
+                }
+            } else {
+                // (optional) nothing else required here
+            }
+        }
+
         binding.btnLogout.setOnClickListener {
-            performLogout()
+            val cancelText = getString(R.string.cancel_logout)
+            val confirmText = getString(R.string.confirm_logout)
+
+            val confirmColor = ContextCompat.getColor(requireContext(), R.color.btn_dark_color)
+            val cancelColor = ContextCompat.getColor(requireContext(), R.color.btn_dark_color)
+
+            val bs = ConfirmActionBottomSheet.newInstance(
+                title = getString(R.string.log_out),
+                message = getString(R.string.logout_ques),
+                action = "logout",
+                confirmText = confirmText,
+                cancelText = cancelText,
+                confirmColorInt = confirmColor,
+                cancelColorInt = cancelColor,
+                showChevron = true
+            )
+            bs.show(parentFragmentManager, "confirm_logout")
         }
 
         val repo = AuthRepository(requireContext())
@@ -169,7 +204,7 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
     }
 
     private fun showFirebaseFallback() {
-        val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+        val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
             binding.tvName.text = getString(R.string.no_user)
             binding.tvEmail.text = ""
